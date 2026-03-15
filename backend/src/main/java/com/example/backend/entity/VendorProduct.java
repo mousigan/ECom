@@ -6,24 +6,25 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "addresses")
+@Table(name = "vendor_products")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Address {
+public class VendorProduct {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String streetAddress;
-    private String city;
-    private String zipCode;
-
-    private Double latitude;
-    private Double longitude;
+    @ManyToOne
+    @JoinColumn(name = "vendor_id")
+    private User vendor;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "product_id")
+    private Product product;
+
+    private Double sellingPrice;
+    private Integer stock;
+    private Double discount;
 }
