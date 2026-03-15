@@ -6,24 +6,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "addresses")
+@Table(name = "categories")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Address {
+public class Category {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String streetAddress;
-    private String city;
-    private String zipCode;
+    @Column(unique = true)
+    private String name;
+    private String slug;
 
-    private Double latitude;
-    private Double longitude;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    public Category(String name, String slug) {
+        this.name = name;
+        this.slug = slug;
+    }
 }
