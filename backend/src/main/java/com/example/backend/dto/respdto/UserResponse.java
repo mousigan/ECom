@@ -5,20 +5,22 @@ public class UserResponse {
     private String name;
     private String email;
     private String role;
+    private String mobileNumber;
     private Integer creditPoints;
 
     public UserResponse() {
     }
 
-    public UserResponse(Long id, String name, String email, String role, Integer creditPoints) {
+    public UserResponse(Long id, String name, String email, String role, String mobileNumber, Integer creditPoints) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.role = role;
+        this.mobileNumber = mobileNumber;
         this.creditPoints = creditPoints;
     }
 
-    // Getters and Setters
+    // Getters and Setter
     public Long getId() {
         return id;
     }
@@ -57,5 +59,13 @@ public class UserResponse {
 
     public void setCreditPoints(Integer creditPoints) {
         this.creditPoints = creditPoints;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
     }
 }

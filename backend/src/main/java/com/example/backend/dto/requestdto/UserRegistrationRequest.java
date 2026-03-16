@@ -5,15 +5,17 @@ public class UserRegistrationRequest {
     private String email;
     private String password;
     private String requestedRole;
+    private String mobileNumber;
 
     public UserRegistrationRequest() {
     }
 
-    public UserRegistrationRequest(String name, String email, String password, String requestedRole) {
+    public UserRegistrationRequest(String name, String email, String password, String requestedRole, String mobileNumber) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.requestedRole = requestedRole;
+        this.mobileNumber = mobileNumber;
     }
 
     // Getters and Setters
@@ -47,5 +49,13 @@ public class UserRegistrationRequest {
 
     public void setRequestedRole(String requestedRole) {
         this.requestedRole = requestedRole;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
     }
 }
