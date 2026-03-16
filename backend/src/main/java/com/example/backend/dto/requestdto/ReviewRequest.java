@@ -1,10 +1,5 @@
 package com.example.backend.dto.requestdto;
 
-// public class ReviewRequest {
-    
-// }
-
-
 import lombok.Data;
 import jakarta.validation.constraints.*;
 
@@ -20,4 +15,3 @@ public class ReviewRequest {
     @NotNull
     private Long productId;
 }
-
