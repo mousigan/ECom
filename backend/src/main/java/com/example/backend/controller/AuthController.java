@@ -1,4 +1,4 @@
-package com.yourname.ecommerce.controller;
+package com.example.backend.controller;
 
 import com.example.backend.dto.requestdto.UserRegistrationRequest;
 import com.example.backend.dto.requestdto.LoginRequest;
