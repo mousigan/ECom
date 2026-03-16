@@ -15,15 +15,15 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final UserService userService;
-    private final com.yourname.ecommerce.repository.AddressRepository addressRepository;
+    private final com.example.backend.repository.AddressRepository addressRepository;
 
-    public AuthController(UserService userService, com.yourname.ecommerce.repository.AddressRepository addressRepository) {
+    public AuthController(UserService userService, com.example.backend.repository.AddressRepository addressRepository) {
         this.userService = userService;
         this.addressRepository = addressRepository;
     }
 
     @GetMapping("/{userId}/addresses")
-    public ResponseEntity<java.util.List<com.yourname.ecommerce.entity.Address>> getUserAddresses(@PathVariable Long userId) {
+    public ResponseEntity<java.util.List<com.example.backend.entity.Address>> getUserAddresses(@PathVariable Long userId) {
         return ResponseEntity.ok(addressRepository.findByUser_Id(userId));
     }
 

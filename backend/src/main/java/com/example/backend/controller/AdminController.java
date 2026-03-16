@@ -31,7 +31,7 @@ public class AdminController {
     }
 
     @PostMapping("/add-vendor")
-    public ResponseEntity<UserResponse> addVendor(@RequestBody com.yourname.ecommerce.dto.request.UserRegistrationRequest request) {
+    public ResponseEntity<UserResponse> addVendor(@RequestBody com.example.backend.dto.requestdto.UserRegistrationRequest request) {
         UserResponse response = adminService.addVendor(request);
         return ResponseEntity.ok(response);
     }

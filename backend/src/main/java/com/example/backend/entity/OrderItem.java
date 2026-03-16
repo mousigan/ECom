@@ -31,11 +31,15 @@ public class OrderItem {
     @JoinColumn(name = "vendor_id")
     private User vendor;
 
+    private String status;
+
     public OrderItem(Integer quantity, Double priceAtPurchase, Order order, Product product, User vendor) {
         this.quantity = quantity;
         this.priceAtPurchase = priceAtPurchase;
         this.order = order;
         this.product = product;
         this.vendor = vendor;
+        this.status = status;
+
     }
 }
