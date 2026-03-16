@@ -26,17 +26,20 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Role role;
 
+    private String mobileNumber;
+    
     private Integer creditPoints = 0;
 
     public enum Role {
-        CUSTOMER, PENDING_VENDOR, VENDOR, ADMIN
+        CUSTOMER, PENDING_VENDOR, VENDOR, ADMIN, ASTADMIN
     }
 
-    public User(String name, String email, String password, Role role) {
+    public User(String name, String email, String password, Role role, String mobileNumber) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.role = role;
+        this.mobileNumber = mobileNumber;
         this.creditPoints = 0;
     }
 }
