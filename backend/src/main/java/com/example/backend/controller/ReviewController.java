@@ -1,10 +1,3 @@
-// package com.example.backend.controller;
-
-// public class ReviewController {
-    
-// }
-
-
 package com.example.backend.controller;
 
 import com.example.backend.dto.requestdto.ReviewRequest;

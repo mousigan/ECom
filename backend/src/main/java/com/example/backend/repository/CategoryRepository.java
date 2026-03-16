@@ -1,11 +1,5 @@
 package com.example.backend.repository;
 
-// public class CategoryRepository {
-    
-// }
-
-
-
 import com.example.backend.entity.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
