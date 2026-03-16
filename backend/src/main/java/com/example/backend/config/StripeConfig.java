@@ -1,3 +1,3 @@
-package com.yourname.ecommerce.config;
+package com.example.backend.config;
 
 public class StripeConfig {}

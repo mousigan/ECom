@@ -1,0 +1,71 @@
+package com.example.backend.controller;
+
+import com.example.backend.dto.requestdto.ProductRequest;
+import com.example.backend.dto.requestdto.VendorProductRequest;
+import com.example.backend.dto.respdto.*;
+import com.example.backend.service.ProductService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+//import jakarta.validation.Valid;
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/products")
+@CrossOrigin(origins = "http://localhost:3000")
+public class ProductController {
+    private final ProductService productService;
+
+    public ProductController(ProductService productService) {
+        this.productService = productService;
+    }
+
+    // Marketplace (User View)
+    @GetMapping("/marketplace")
+    public ResponseEntity<List<ProductResponse>> getMarketplaceProducts(
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String search) {
+        return ResponseEntity.ok(productService.getMarketplaceProducts(category, search));
+    }
+
+    @GetMapping("/{id}/details")
+    public ResponseEntity<ProductDetailResponse> getProductDetails(@PathVariable Long id) {
+        return ResponseEntity.ok(productService.getProductDetails(id));
+    }
+
+    // Vendor specific: Add new product directly
+    @PostMapping("/add")
+    public ResponseEntity<String> addVendorProduct(@RequestParam Long vendorId, @Valid @RequestBody ProductRequest request) {
+        productService.addVendorProduct(vendorId, request);
+        return ResponseEntity.ok("Product successfully added to your store");
+    }
+
+    @GetMapping("/vendor-inventory")
+    public ResponseEntity<List<VendorProductResponse>> getVendorInventory(@RequestParam Long vendorId) {
+        return ResponseEntity.ok(productService.getVendorInventory(vendorId));
+    }
+
+    @PutMapping("/vendor-inventory/{id}")
+    public ResponseEntity<String> updateVendorProduct(@PathVariable Long id, @Valid @RequestBody VendorProductRequest request) {
+        productService.updateVendorProduct(id, request);
+        return ResponseEntity.ok("Inventory updated successfully");
+    }
+
+    @DeleteMapping("/vendor-inventory/{id}")
+    public ResponseEntity<String> deleteVendorProduct(@PathVariable Long id) {
+        productService.deleteVendorProduct(id);
+        return ResponseEntity.ok("Product removed from your inventory");
+    }
+
+    // Categories
+    @GetMapping("/categories")
+    public ResponseEntity<List<CategoryResponse>> getCategories() {
+        return ResponseEntity.ok(productService.getAllCategories());
+    }
+
+    // Comparison
+    @GetMapping("/compare")
+    public ResponseEntity<List<ProductDetailResponse>> compareProducts(@RequestParam List<Long> ids) {
+        return ResponseEntity.ok(productService.compareProducts(ids));
+    }
+}

@@ -1,4 +1,3 @@
 package com.example.backend.config;
 
-public class WebConfig {
-}
+public class WebConfig {}
