@@ -1,4 +1,3 @@
-
 package com.example.backend.service;
 
 import com.example.backend.dto.requestdto.LoginRequest;
@@ -14,4 +13,5 @@ public interface UserService {
     UserResponse getUserProfile(Long userId);
     void forgotPassword(ForgotPasswordRequest request);
     void resetPassword(ResetPasswordRequest request);
+    void deleteAccount(Long userId);
 }
