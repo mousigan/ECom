@@ -1,21 +1,23 @@
 package com.example.backend.dto.requestdto;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+
+@Data
 public class VendorProductRequest {
+    @NotNull
     private Long productId;
+
+    @NotNull
+    @Min(0)
     private Double sellingPrice;
+
+    @NotNull
+    @Min(0)
     private Integer stock;
+
+    @NotNull
+    @Min(0)
     private Double discount;
-
-    public VendorProductRequest() {
-    }
-
-    // Getters and Setters
-    public Long getProductId() { return productId; }
-    public void setProductId(Long productId) { this.productId = productId; }
-    public Double getSellingPrice() { return sellingPrice; }
-    public void setSellingPrice(Double sellingPrice) { this.sellingPrice = sellingPrice; }
-    public Integer getStock() { return stock; }
-    public void setStock(Integer stock) { this.stock = stock; }
-    public Double getDiscount() { return discount; }
-    public void setDiscount(Double discount) { this.discount = discount; }
 }

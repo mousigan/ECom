@@ -12,10 +12,22 @@ public interface VendorProductRepository extends JpaRepository<VendorProduct, Lo
     List<VendorProduct> findByVendorId(Long vendorId);
     List<VendorProduct> findByProductId(Long productId);
     Optional<VendorProduct> findByVendorAndProduct(User vendor, Product product);
+    Optional<VendorProduct> findByProductIdAndVendorId(Long productId, Long vendorId);
+    List<VendorProduct> findByProduct_Id(Long productId);
     
-    @Query("SELECT DISTINCT vp.product FROM VendorProduct vp")
-    List<Product> findAvailableProducts();
+    @Query("SELECT vp FROM VendorProduct vp JOIN FETCH vp.product JOIN FETCH vp.vendor")
+    List<VendorProduct> findAvailableProducts();
 
-    @Query("SELECT DISTINCT vp.product FROM VendorProduct vp WHERE vp.product.category = :category")
-    List<Product> findAvailableProductsByCategory(String category);
+    @Query("SELECT vp FROM VendorProduct vp JOIN FETCH vp.product JOIN FETCH vp.vendor WHERE vp.product.category = :category")
+    List<VendorProduct> findAvailableProductsByCategory(String category);
+
+    @Query("SELECT vp FROM VendorProduct vp JOIN FETCH vp.product JOIN FETCH vp.vendor " +
+           "WHERE (:category IS NULL OR :category = '' OR LOWER(vp.product.category) = LOWER(:category)) " +
+           "AND (:search IS NULL OR :search = '' " +
+           "OR LOWER(vp.product.name) LIKE LOWER(CONCAT('%', :search, '%')) " +
+           "OR LOWER(vp.product.brand) LIKE LOWER(CONCAT('%', :search, '%')) " +
+           "OR LOWER(vp.product.category) LIKE LOWER(CONCAT('%', :search, '%')) " +
+           "OR LOWER(vp.vendor.name) LIKE LOWER(CONCAT('%', :search, '%')))")
+    List<VendorProduct> searchAvailableProducts(@org.springframework.data.repository.query.Param("category") String category, 
+                                               @org.springframework.data.repository.query.Param("search") String search);
 }
