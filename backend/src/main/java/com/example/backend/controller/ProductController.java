@@ -7,13 +7,13 @@ import com.example.backend.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+//import jakarta.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/products")
 @CrossOrigin(origins = "http://localhost:3000")
 public class ProductController {
-
     private final ProductService productService;
 
     public ProductController(ProductService productService) {
@@ -35,7 +35,7 @@ public class ProductController {
 
     // Vendor specific: Add new product directly
     @PostMapping("/add")
-    public ResponseEntity<String> addVendorProduct(@RequestParam Long vendorId, @RequestBody ProductRequest request) {
+    public ResponseEntity<String> addVendorProduct(@RequestParam Long vendorId, @Valid @RequestBody ProductRequest request) {
         productService.addVendorProduct(vendorId, request);
         return ResponseEntity.ok("Product successfully added to your store");
     }
@@ -43,6 +43,18 @@ public class ProductController {
     @GetMapping("/vendor-inventory")
     public ResponseEntity<List<VendorProductResponse>> getVendorInventory(@RequestParam Long vendorId) {
         return ResponseEntity.ok(productService.getVendorInventory(vendorId));
+    }
+
+    @PutMapping("/vendor-inventory/{id}")
+    public ResponseEntity<String> updateVendorProduct(@PathVariable Long id, @Valid @RequestBody VendorProductRequest request) {
+        productService.updateVendorProduct(id, request);
+        return ResponseEntity.ok("Inventory updated successfully");
+    }
+
+    @DeleteMapping("/vendor-inventory/{id}")
+    public ResponseEntity<String> deleteVendorProduct(@PathVariable Long id) {
+        productService.deleteVendorProduct(id);
+        return ResponseEntity.ok("Product removed from your inventory");
     }
 
     // Categories
@@ -53,7 +65,7 @@ public class ProductController {
 
     // Comparison
     @GetMapping("/compare")
-    public ResponseEntity<List<ProductResponse>> compareProducts(@RequestParam List<Long> ids) {
+    public ResponseEntity<List<ProductDetailResponse>> compareProducts(@RequestParam List<Long> ids) {
         return ResponseEntity.ok(productService.compareProducts(ids));
     }
 }

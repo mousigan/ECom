@@ -13,9 +13,11 @@ public interface ProductService {
     // Vendor specific
     void addVendorProduct(Long vendorId, ProductRequest request); // Direct addition
     List<VendorProductResponse> getVendorInventory(Long vendorId);
+    void updateVendorProduct(Long vendorProductId, VendorProductRequest request);
+    void deleteVendorProduct(Long vendorProductId);
     
     // Comparison
-    List<ProductResponse> compareProducts(List<Long> productIds);
+    List<ProductDetailResponse> compareProducts(List<Long> productIds);
     
     // Categories
     List<CategoryResponse> getAllCategories();

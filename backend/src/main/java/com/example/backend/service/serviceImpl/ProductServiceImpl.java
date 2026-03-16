@@ -22,37 +22,47 @@ public class ProductServiceImpl implements ProductService {
     private final VendorProductRepository vendorProductRepository;
     private final CategoryRepository categoryRepository;
     private final VendorRatingRepository vendorRatingRepository;
+    private final ReviewRepository reviewRepository;
 
     public ProductServiceImpl(ProductRepository productRepository, 
                               UserRepository userRepository,
                               VendorProductRepository vendorProductRepository,
                               CategoryRepository categoryRepository,
-                              VendorRatingRepository vendorRatingRepository) {
+                              VendorRatingRepository vendorRatingRepository,
+                              ReviewRepository reviewRepository) {
         this.productRepository = productRepository;
         this.userRepository = userRepository;
         this.vendorProductRepository = vendorProductRepository;
         this.categoryRepository = categoryRepository;
         this.vendorRatingRepository = vendorRatingRepository;
+        this.reviewRepository = reviewRepository;
     }
 
     @Override
     public List<ProductResponse> getMarketplaceProducts(String category, String search) {
-        List<Product> products;
-        if (category != null && !category.isEmpty()) {
-            products = vendorProductRepository.findAvailableProductsByCategory(category);
+        List<VendorProduct> listings;
+        
+        if ((search != null && !search.isEmpty()) || (category != null && !category.isEmpty())) {
+            listings = vendorProductRepository.searchAvailableProducts(category, search);
         } else {
-            products = vendorProductRepository.findAvailableProducts();
+            listings = vendorProductRepository.findAvailableProducts();
+        }
+
+        // Batch fetch ratings to solve N+1 Problem
+        List<Long> vendorIds = listings.stream()
+            .map(vp -> vp.getVendor().getId())
+            .distinct()
+            .collect(Collectors.toList());
+        
+        // We can create a simple map of VendorId -> Rating
+        java.util.Map<Long, Double> ratingMap = new java.util.HashMap<>();
+        for (Long vid : vendorIds) {
+            ratingMap.put(vid, vendorRatingRepository.getAverageRatingForVendor(vid));
         }
         
-        if (search != null && !search.isEmpty()) {
-            String lowerSearch = search.toLowerCase();
-            products = products.stream()
-                .filter(p -> (p.getName() != null && p.getName().toLowerCase().contains(lowerSearch)) || 
-                             (p.getBrand() != null && p.getBrand().toLowerCase().contains(lowerSearch)))
-                .collect(Collectors.toList());
-        }
-        
-        return products.stream().map(this::mapToProductResponse).collect(Collectors.toList());
+        return listings.stream()
+            .map(vp -> mapListingToProductResponse(vp, ratingMap.get(vp.getVendor().getId())))
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -71,8 +81,12 @@ public class ProductServiceImpl implements ProductService {
                     vlr.setVendorRating(vendorRatingRepository.getAverageRatingForVendor(vp.getVendor().getId()));
                     return vlr;
                 }).collect(Collectors.toList());
+
+        List<ReviewResponse> reviews = reviewRepository.findByProductId(productId).stream()
+                .map(r -> new ReviewResponse(r.getId(), r.getRating(), r.getComment(), r.getUser().getName(), r.getUser().getId()))
+                .collect(Collectors.toList());
         
-        return new ProductDetailResponse(mapToProductResponse(product), vendors);
+        return new ProductDetailResponse(mapToProductResponse(product), vendors, reviews);
     }
 
     @Override
@@ -109,6 +123,28 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Transactional
+    public void updateVendorProduct(Long vendorProductId, VendorProductRequest request) {
+        VendorProduct vp = vendorProductRepository.findById(vendorProductId)
+                .orElseThrow(() -> new RuntimeException("Vendor product listing not found"));
+        
+        vp.setSellingPrice(request.getSellingPrice());
+        vp.setStock(request.getStock());
+        vp.setDiscount(request.getDiscount());
+        
+        vendorProductRepository.save(vp);
+    }
+
+    @Override
+    @Transactional
+    public void deleteVendorProduct(Long vendorProductId) {
+        if (!vendorProductRepository.existsById(vendorProductId)) {
+            throw new RuntimeException("Vendor product listing not found");
+        }
+        vendorProductRepository.deleteById(vendorProductId);
+    }
+
+    @Override
     public List<VendorProductResponse> getVendorInventory(Long vendorId) {
         return vendorProductRepository.findByVendorId(vendorId)
                 .stream().map(vp -> {
@@ -116,6 +152,7 @@ public class ProductServiceImpl implements ProductService {
                     vpr.setId(vp.getId());
                     vpr.setProductId(vp.getProduct().getId());
                     vpr.setProductName(vp.getProduct().getName());
+                    vpr.setOriginalPrice(vp.getProduct().getPrice());
                     vpr.setSellingPrice(vp.getSellingPrice());
                     vpr.setStock(vp.getStock());
                     vpr.setDiscount(vp.getDiscount());
@@ -124,9 +161,10 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductResponse> compareProducts(List<Long> productIds) {
-        return productRepository.findAllById(productIds)
-                .stream().map(this::mapToProductResponse).collect(Collectors.toList());
+    public List<ProductDetailResponse> compareProducts(List<Long> productIds) {
+        return productIds.stream()
+                .map(this::getProductDetails)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -134,6 +172,16 @@ public class ProductServiceImpl implements ProductService {
         return categoryRepository.findAll().stream()
                 .map(c -> new CategoryResponse(c.getId(), c.getName(), c.getSlug()))
                 .collect(Collectors.toList());
+    }
+
+    private ProductResponse mapListingToProductResponse(VendorProduct vp, Double averageRating) {
+        ProductResponse pr = mapToProductResponse(vp.getProduct());
+        pr.setVendorName(vp.getVendor().getName());
+        pr.setVendorId(vp.getVendor().getId());
+        pr.setVendorRating(averageRating != null ? averageRating : 0.0);
+        pr.setStock(vp.getStock());
+        pr.setPrice(vp.getSellingPrice());
+        return pr;
     }
 
     private ProductResponse mapToProductResponse(Product p) {

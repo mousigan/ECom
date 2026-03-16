@@ -1,6 +1,3 @@
-
-
-
 package com.example.backend.repository;
 
 import com.example.backend.entity.Product;

@@ -1,4 +1,4 @@
-package com.example.backend.dto.respdto;
+ package com.example.backend.dto.respdto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,4 +22,8 @@ public class ProductResponse {
     private Integer ecoScore;
     private String tryOnModelUrl;
     private Map<String, String> specifications;
+    private String vendorName;
+    private Long vendorId;
+    private Double vendorRating;
+    private Integer stock;
 }
