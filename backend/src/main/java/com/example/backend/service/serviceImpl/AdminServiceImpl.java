@@ -39,7 +39,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public UserResponse addVendor(com.yourname.ecommerce.dto.request.UserRegistrationRequest request) {
+    public UserResponse addVendor(com.example.backend.dto.requestdto.UserRegistrationRequest request) {
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
