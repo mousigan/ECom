@@ -22,6 +22,7 @@ public class Order {
     private LocalDateTime orderDate;
     private Double totalAmount;
     private String orderStatus;
+    private String shippingAddress;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
