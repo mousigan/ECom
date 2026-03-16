@@ -43,8 +43,4 @@ public class Product {
     @MapKeyColumn(name = "spec_key")
     @Column(name = "spec_value")
     private Map<String, String> specifications = new HashMap<>();
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> origin/main
