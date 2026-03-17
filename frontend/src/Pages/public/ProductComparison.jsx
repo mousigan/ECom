@@ -74,7 +74,7 @@ const ProductComparison = () => {
     // Get all unique specification keys across all products
     const allSpecKeys = Array.from(new Set(
         products.flatMap(d => d.product.specifications ? Object.keys(d.product.specifications) : [])
-    )).sort();
+    )).sort((a, b) => a - b);
 
     return (
         <div style={containerStyle}>
